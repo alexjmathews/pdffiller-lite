@@ -1,0 +1,20 @@
+{
+  "name": "pdffiller-lite",
+  "version": "0.0.1",
+  "description": "A lite version of the popular pdffiller package for using in an electron app.",
+  "main": "index.js",
+  "keywords": [
+    "nodejs",
+    "pdftk",
+    "fdf",
+    "pdffiller-lite",
+    "pdf"
+  ],
+  "dependencies": {
+    "lodash": "~3.8.0"
+  },
+  "author": {
+    "name": "Alex Mathews"
+  },
+  "license": "MIT"
+}
