@@ -1,6 +1,6 @@
 {
   "name": "pdffiller-lite",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A lite version of the popular pdffiller package for using in an electron app.",
   "main": "index.js",
   "keywords": [
