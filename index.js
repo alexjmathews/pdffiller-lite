@@ -100,6 +100,64 @@
             });
         },
 
+        generateFieldMap: function( sourceFile, nameRegex, callback){
+            var regName = /FieldName: ([^\n]*)/,
+                regType = /FieldType: ([A-Za-z\t .]+)/,
+                regFlags = /FieldFlags: ([0-9\t .]+)/,
+                regOptions = /FieldStateOption: ([^\n]*)/gm,
+                regOption = /FieldStateOption: ([^\n]*)/,
+                fieldMap = {},
+                currField = {};
+
+            if(nameRegex !== null && (typeof nameRegex) == 'object' ) regName = nameRegex;
+
+            exec( "pdftk " + sourceFile + " dump_data_fields_utf8 " , function (error, stdout, stderr) {
+                if (error) {
+                    console.log('exec error: ' + error);
+                    return callback(error, null);
+                }
+
+                fields = stdout.toString().split("---").slice(1);
+                fields.forEach(function(field){
+                    currField = {};
+
+                    var title = field.match(regName)[1].trim() || '';
+
+                    if(field.match(regType)){
+                        currField['fieldType'] = field.match(regType)[1].trim() || '';
+                    }else {
+                        currField['fieldType'] = '';
+                    }
+
+                    if(field.match(regFlags)){
+                        currField['fieldFlags'] = field.match(regFlags)[1].trim()|| '';
+                    }else{
+                        currField['fieldFlags'] = '';
+                    }
+
+                    if(field.match(regOptions)){
+                        var options = [];
+                        var usesYes = false;
+                        field.match(regOptions).forEach(function(optionLine){
+                            var opt = optionLine.match(regOption)[1].trim() || '';
+                            if (opt == 'Yes') {
+                                usesYes = true;
+                            }
+                            options.push(opt);
+                        });
+                        currField['fieldOptions'] = options;
+                        currField['usesYes'] = usesYes;
+                    }
+
+                    currField['fieldValue'] = '';
+
+                    fieldMap[title] = currField;
+                });
+
+                return callback(null, fieldMap);
+            });
+        },
+
         generateFDFTemplate: function( sourceFile, nameRegex, callback ){
             this.generateFieldJson(sourceFile, nameRegex, function(err, _form_fields){
                 if (err) {
